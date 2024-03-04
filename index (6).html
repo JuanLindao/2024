@@ -3,47 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="ICONE.ico" type="Aula-03/ICONE"
-    <title></title>
+    <title>Registro de Pokémon</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.2/js/jquery.tablesorter.min.js"></script>
+    <script src="https://cdnjs.cloudflare./ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid rgb(0,0,0);
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #FFFFFF;
+        }
+    </style>
 </head>
 <body>
-    <h1> LISTA DE ATIVIDADES NA SEMANA.</h1>
-    
-    <p> Aqui estou mostrando com será a rotina da semana do dia 26/02 até 01/03</p>
-    
-    <img src="bara01.png" alt="logo do barão">
-    <img src="BARAO2.jpg" alt="foto do Barão">
-    <img src="NEWTON1.jpg" alt="logo do Newton">
-    <img src="NEWTON2.jpg" alt="foto do Newton">
-    
-    
-        <li>Segunda-feira</li>
-        <a href="segunda.html" target="_blank">Horário de segunda-feira dia 26/02</a>
-    
-        <li>Terça-feira</li>
-        <a href="terca.html" target="_blank">Horário de terça-feira dia 27/02</a>
-    
-        <li>Quarta-feira</li>
-        <a href="quarta.html" target="_blank">Horário de quarta-feira dia 27/02</a>
-        
-        <li>Quinta-feira</li>
-        <a href="quinta.html" target="_blank">Horário de quinta-feira dia 27/02</a>
-        
-        <li>Sexta-feira</li>
-        <a href="sexta.html" target="_blank">Horário de sexta-feira dia 27/02</a>
-        
-    </ol>
-    <h2> PARA VER TODOS OS ARQUIVOS</h2>
-    <a href="https://github.com/rogeriodfreis/HTML-CSS" target="_blank">Acesse o GitHub para pegar os exemplos feitos</a>
+    <input type="text" id="search-box" placeholder="Pesquise um Pokémon...">
+    <table id="pokemon-table">
+        <thead>
+            <tr>
+                <th>Imagem</th>
+                <th>Nome</th>
+                <th>Tipo (elemento)</th>
+                <th>Habilidades</th>
+                <th>Habilidade Secreta</th>
+            </tr>
+        </thead>
+        <tbody id="pokemon-data">
+            <!-- Add your Pokémon data here -->
+        </tbody>
+    </table>
+    <script>
+        const pokemonData = [
+            {
+                name: "Bulbassauro",
+                types: ["Grama", "Venenoso"],
+                abilities: ["Overgrow", "Chlorophyll"],
+                hiddenAbility: "Solar Power"
+            },
+            {
+                name: "Charmander",
+                types: ["Fire"],
+                abilities: ["Blaze", "Solar Power"],
+                hiddenAbility: "Solar Power"
+            },
+            {
+                name: "Squirtle",
+                types: ["Water"],
+                abilities: ["Torrent", "Rain Dish"],
+                hiddenAbility: "Rain Dish"
+            }
+        ];
 
-    <h2> PARA BAIXAR ESSE CONTEUDO EM PDF</h2>
-    <a href="https://github.com/rogeriodfreis/HTML-CSS/blob/main/COINI.pdf" target="_blank"  download="COINI.pdf" type="aplication/pdf">
-        Baixe aqui seu PDF dos principais comandos.
-    </a>
-     <h2> PARA PUBLICAR O SITE</h2>
-    
-    <p> Rotinas para publicar o site.</p>
-    
-    
-</body>
-</html>
+        function displayPokemonData(pokemon) {
+            let pokemonData = "<tr><td><img src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" + pokemon.id + ".png' alt='" + pokemon.name + "'></td><td>" + pokemon.name + "</td><td>" + pokemon.types.join("/") + "</td><td>" + pokemon.abilities.join(", ") + "</td><td>" + pokemon.hiddenAbility + "</td></tr>";
+            $("#pokemon-data").append(pokemonData);
+        }
+
+        function searchPokemon(value) {
+            $("#pokemon-table tbody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            });
+        }
+
+        function fetchPokemonData() {
+            $.getJSON("https://pokeapi.co/api/v2/pokemon?limit=151", function(data) {
+                $.each(data.results, function(index, value) {
+                    $.getJSON(value.url, function(pokemon) {
+                        displayPokemonData(pokemon);
+                    });
+                });
+            });
+        }
+
+        $(document).ready(function() {
+            $("#pokemon-table").
